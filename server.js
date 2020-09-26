@@ -118,7 +118,6 @@ io.on('connection', socket => {
       return el.roomName == room
     })
     playerTurn = callData.playerTurn;
-    playerTurn = setPlayerTurn(playerTurn, roomUsers);
     let playerCalls = 0;
     let playerCount = 0;
     for (let i in tbl) {
@@ -128,11 +127,17 @@ io.on('connection', socket => {
       }
     }
     if(playerCount > playerCalls + 1){
+      // if all players but one have not called (the one who made the origianl bet), then we are good to move to the next player's turn
+      playerTurn = setPlayerTurn(playerTurn, roomUsers);
       io.to(room).emit('player-board', tbl)
       io.to(room).emit('next-player', playerTurn)
     } else {
+      // if all players have called the original player's bet, then we need to see if the original player won, or will be kicking a die
+      
+      // define variables to determine what the player's bet (value and quantity) is
       let targetValue    = callData.currentValue;
       let targetQuantity = callData.currentQuantity;
+      // loop through all player's dice to see how many times the target value actually appears
       let actualQuantity = 0;
         for (let i in tbl) {
           users[i].dice.forEach((die) => {
@@ -141,12 +146,16 @@ io.on('connection', socket => {
             }
           })
         }
-        console.log(actualQuantity);
+
       if(actualQuantity >= targetQuantity) {
-        // user wins
-        console.log('WINNER!')
+        // user wins, and their score needs to be increased +1
+        // and then new dice need to be issued
+        let winner = roomUsers.filter(function(el){
+          return el.playerNumber == playerTurn;
+        })
+        console.log(winner);
       } else {
-        // user kicks a die
+        // user kicks a die, and new dice need to be issued
         console.log('LOSER')
       }
     }
