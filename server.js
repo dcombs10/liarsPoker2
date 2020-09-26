@@ -88,10 +88,12 @@ io.on('connection', socket => {
   })
   socket.on('raise', ([raiseData, tbl]) => {
     let validRaise = false;
+    console.log(`current value is ${raiseData.currentQuantity} ${raiseData.currentValue}s; proposed raise is ${raiseData.raiseQuantity} ${raiseData.raiseValue}s`)
     if(raiseData.raiseQuantity > raiseData.currentQuantity){
-      validRaise = true;
+      validRaise = !validRaise;
+
     } else if((raiseData.raiseValue == 1 || raiseData.raiseValue >= raiseData.currentValue) && raiseData.raiseQuantity >= raiseData.currentQuantity) {
-      validRaise = true;
+      validRaise = !validRaise;
     }
     if(validRaise) {
       let room = raiseData.room;
@@ -118,6 +120,7 @@ io.on('connection', socket => {
       return el.roomName == room
     })
     playerTurn = callData.playerTurn;
+    playerTurn = setPlayerTurn(playerTurn, roomUsers);
     let playerCalls = 0;
     let playerCount = 0;
     for (let i in tbl) {
@@ -128,7 +131,6 @@ io.on('connection', socket => {
     }
     if(playerCount > playerCalls + 1){
       // if all players but one have not called (the one who made the origianl bet), then we are good to move to the next player's turn
-      playerTurn = setPlayerTurn(playerTurn, roomUsers);
       io.to(room).emit('player-board', tbl)
       io.to(room).emit('next-player', playerTurn)
     } else {
@@ -146,14 +148,52 @@ io.on('connection', socket => {
             }
           })
         }
-
+        console.log(`The target amount of ${targetValue}s is ${targetQuantity}; there are actually ${actualQuantity}`)
       if(actualQuantity >= targetQuantity) {
         // user wins, and their score needs to be increased +1
         // and then new dice need to be issued
+
+        // filter to winner
         let winner = roomUsers.filter(function(el){
           return el.playerNumber == playerTurn;
         })
-        console.log(winner);
+
+        // filter to losers
+        let losers = roomUsers.filter(function(el){
+          return el.playerNumber != playerTurn;
+        })
+
+        // increment winner's score by 1
+        winner[0].score += 1;
+        // decrement losers' scores by 1
+        for(let i in losers){
+          losers[i].score -= 1;
+        }
+  
+
+      var combinedPlayers = winner.map(function(n, i) {
+          return [n, losers[i]];
+      });
+
+// YOu WERE HERE!!!!
+
+        // update tbl to reset responses and show new scores
+        for (let i in tbl) {
+          if(tbl[i].playerNumber == winner[0].playerNumber){
+            tbl[i].response = `Winner's Turn to Start!`;
+            tbl[i].score = winner[0].score;  
+          }else {
+            tbl[i].response = 'Awaiting turn...';
+          } 
+          if(tbl[i].playerNumber == losers[i].playerNumber){
+            tbl[i].score = losers[i].score;
+          }        
+        }
+        io.to(room).emit('player-board', tbl)
+        io.to(room).emit('next-player', playerTurn)
+
+        // we need to reissue dice 
+        
       } else {
         // user kicks a die, and new dice need to be issued
         console.log('LOSER')
