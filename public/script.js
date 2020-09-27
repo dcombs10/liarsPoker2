@@ -7,16 +7,17 @@ const playersDice = document.getElementById('players-dice')
 
 if(playersDice) {
   const name = prompt('What is your name?')
+  alert('you are here')
   // appendMessage('You joined')
   socket.emit('new-user', roomName, name)
 
-  messageForm.addEventListener('submit', e => {
-    e.preventDefault()
-    const message = messageInput.value
-    appendMessage(`You: ${message}`)
-    socket.emit('send-chat-message', roomName, message)
-    messageInput.value = ''
-  })
+  // messageForm.addEventListener('submit', e => {
+  //   e.preventDefault()
+  //   const message = messageInput.value
+  //   appendMessage(`You: ${message}`)
+  //   socket.emit('send-chat-message', roomName, message)
+  //   messageInput.value = ''
+  // })
 }
 
 socket.on('room-created', room => {
