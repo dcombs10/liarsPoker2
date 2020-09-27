@@ -7,10 +7,9 @@ const playersDice = document.getElementById('players-dice')
 
 if(playersDice) {
   const name = prompt('What is your name?')
-  alert('you are here')
-  // appendMessage('You joined')
   socket.emit('new-user', roomName, name)
 
+  // appendMessage('You joined')
   // messageForm.addEventListener('submit', e => {
   //   e.preventDefault()
   //   const message = messageInput.value
