@@ -10,8 +10,8 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'))
 app.use(express.urlencoded({extended: true}))
 
-const rooms = {}
-const users = []
+let rooms = {}
+let users = []
 let gameRoomString;
 // show all rooms
 app.get('/', (req, res) => {
@@ -159,7 +159,6 @@ io.on('connection', socket => {
           }
             roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
         }   
-      io.to(room).emit('reset-call')
       } else {
         // Find the loser
         const loser = roomUsers.find((item) => {
@@ -175,13 +174,14 @@ io.on('connection', socket => {
               roomUsers[i].response = 'Go Loser'
             }
           } else {
-            roomUsers[i].response = 'Waiting on ${losersName} the LOSER to go...';
+            roomUsers[i].response = `Waiting on ${losersName} the LOSER to go...`;
           }
             roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
         }
       }
       io.to(room).emit('player-board', roomUsers)
       io.to(room).emit('next-player', playerTurn)
+      io.to(room).emit('reset-call')
     }
   });
   socket.on('send-chat-message', (room, message) => {
@@ -190,10 +190,8 @@ io.on('connection', socket => {
       name: rooms[room].users[socket.id] })
   })
   socket.on('disconnect', () => {
-    getUserRooms(socket).forEach(room => {
-      socket.to(room).broadcast.emit('user-disconnected', rooms[room].users[socket.id])
-      delete rooms[room].users[socket.id]
-    })
+    console.log("User disconnected: " + socket.id);
+    // Remove the user with that socket id from all rooms
   })
 })
 
@@ -207,29 +205,8 @@ function setPlayerTurn(number, array) {
 }
 
 function getUserRooms(socket) {
-  return Object.entries(rooms).reduce((names, [name, room]) => {
+  return Object.entries(users).reduce((names, [name, room]) => {
     if (room.users[socket.id] != null) names.push(name)
     return names
   }, [])
 }
-
-Object.filter = (obj, predicate) => 
-    Object.keys(obj)
-          .filter( key => predicate(obj[key]) )
-          .reduce( (res, key) => (res[key] = obj[key], res), {} );
-
-// function sendPlayerboardToRoom(room){
-//   for (const property in users){
-//     if(users[])
-//   }
-  
-//   console.log(room)
-//   let roomUsers = Object.filter(users, value => roomName = room)
-//   console.log(roomUsers)
-// };
-          
-// var scores = {
-//   John: 2, Sarah: 3, Janet: 1
-// };
-// var filtered = Object.filter(scores, score => score > 1); 
-// console.log(filtered);
