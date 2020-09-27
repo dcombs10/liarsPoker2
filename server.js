@@ -171,7 +171,7 @@ io.on('connection', socket => {
               roomUsers[i].score -= 1;
             } else if(roomUsers[i].diceKount > 1) {
               roomUsers[i].diceKount -= 1;
-              roomUsers[i].response = 'Go Loser'
+              roomUsers[i].response = 'Your turn LOSER'
             }
           } else {
             roomUsers[i].response = `Waiting on ${losersName} the LOSER to go...`;
