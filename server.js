@@ -42,7 +42,7 @@ server.listen(process.env.PORT || 3000, () => {
 });
 
 io.on('connection', socket => {
-  console.log("A new user connected: " + socket.id);
+  // console.log("A new user connected: " + socket.id);
   socket.on('new-user', (room, name) => {
     socket.join(room)
 
@@ -190,7 +190,7 @@ io.on('connection', socket => {
       name: rooms[room].users[socket.id] })
   })
   socket.on('disconnect', () => {
-    console.log("User disconnected: " + socket.id);
+    // console.log("User disconnected: " + socket.id);
     // Remove the user with that socket id from all rooms
   })
 })
