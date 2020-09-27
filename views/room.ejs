@@ -217,6 +217,10 @@
     playerTable += `</table>`
     playerBoard.innerHTML = playerTable;
   })
+  socket.on('reset-call', () => {
+    currentValue.innerText = 2;
+    currentQuantity.innerText = 1;
+  })
   
 
   let raiseFormSubmission = (e) => {

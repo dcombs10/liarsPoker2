@@ -158,18 +158,24 @@ io.on('connection', socket => {
             roomUsers[i].response = 'Waiting on the winner to go...';
           }
             roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
-        }        
+        }   
+      io.to(room).emit('reset-call')
       } else {
+        // Find the loser
+        const loser = roomUsers.find((item) => {
+          return item.playerNumber === playerTurn
+        })
+        let losersName = loser.playerName
         for(let i in roomUsers){
           if(roomUsers[i].playerNumber == playerTurn){
-            if(roomUsers[i].diceKount = 1){
+            if(roomUsers[i].diceKount == 1){
               roomUsers[i].score -= 1;
             } else if(roomUsers[i].diceKount > 1) {
-              roomUsers[i].diceKount -= roomUsers[i].diceKount;
+              roomUsers[i].diceKount -= 1;
               roomUsers[i].response = 'Go Loser'
             }
           } else {
-            roomUsers[i].response = 'Waiting on the loser to go...';
+            roomUsers[i].response = 'Waiting on ${losersName} the LOSER to go...';
           }
             roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
         }
