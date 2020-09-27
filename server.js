@@ -68,7 +68,6 @@ io.on('connection', socket => {
     // update users object with newly created user and associated player data
     users.push(self)
     
-    
     // filter users object to just those in this room
     let roomUsers = users.filter(function(el){
       return el.roomName == room
@@ -88,7 +87,6 @@ io.on('connection', socket => {
   })
   socket.on('raise', ([raiseData, tbl]) => {
     let validRaise = false;
-    console.log(`current value is ${raiseData.currentQuantity} ${raiseData.currentValue}s; proposed raise is ${raiseData.raiseQuantity} ${raiseData.raiseValue}s`)
     if(raiseData.raiseQuantity > raiseData.currentQuantity){
       validRaise = !validRaise;
 
@@ -142,57 +140,26 @@ io.on('connection', socket => {
       // loop through all player's dice to see how many times the target value actually appears
       let actualQuantity = 0;
         for (let i in tbl) {
-          users[i].dice.forEach((die) => {
+          roomUsers[i].dice.forEach((die) => {
             if(die == targetValue){
               actualQuantity++;
             }
           })
         }
-        console.log(`The target amount of ${targetValue}s is ${targetQuantity}; there are actually ${actualQuantity}`)
       if(actualQuantity >= targetQuantity) {
         // user wins, and their score needs to be increased +1
         // and then new dice need to be issued
-
-        // filter to winner
-        let winner = roomUsers.filter(function(el){
-          return el.playerNumber == playerTurn;
-        })
-
-        // filter to losers
-        let losers = roomUsers.filter(function(el){
-          return el.playerNumber != playerTurn;
-        })
-
-        // increment winner's score by 1
-        winner[0].score += 1;
-        // decrement losers' scores by 1
-        for(let i in losers){
-          losers[i].score -= 1;
+        for(let i in roomUsers){
+          if(roomUsers[i].playerNumber == playerTurn){
+            roomUsers[i].score += 1;
+          } else {
+            roomUsers[i].score -= 1;
+          }
+            roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
         }
-  
 
-      var combinedPlayers = winner.map(function(n, i) {
-          return [n, losers[i]];
-      });
-
-// YOu WERE HERE!!!!
-
-        // update tbl to reset responses and show new scores
-        for (let i in tbl) {
-          if(tbl[i].playerNumber == winner[0].playerNumber){
-            tbl[i].response = `Winner's Turn to Start!`;
-            tbl[i].score = winner[0].score;  
-          }else {
-            tbl[i].response = 'Awaiting turn...';
-          } 
-          if(tbl[i].playerNumber == losers[i].playerNumber){
-            tbl[i].score = losers[i].score;
-          }        
-        }
         io.to(room).emit('player-board', tbl)
         io.to(room).emit('next-player', playerTurn)
-
-        // we need to reissue dice 
         
       } else {
         // user kicks a die, and new dice need to be issued
