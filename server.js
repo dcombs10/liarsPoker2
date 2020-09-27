@@ -37,8 +37,8 @@ app.post("/room", (req, res) => {
   // io.emit('room-created', req.body.room)
 })
 
-server.listen(3000, () => {
-  console.log("Server is listening on Port 3000");
+server.listen(process.env.PORT || 3000, () => {
+  // console.log("Server is listening on Port 3000");
 });
 
 io.on('connection', socket => {
