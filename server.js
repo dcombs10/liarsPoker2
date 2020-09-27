@@ -152,19 +152,30 @@ io.on('connection', socket => {
         for(let i in roomUsers){
           if(roomUsers[i].playerNumber == playerTurn){
             roomUsers[i].score += 1;
+            roomUsers[i].response = 'Winner!';
           } else {
             roomUsers[i].score -= 1;
+            roomUsers[i].response = 'Waiting on the winner to go...';
+          }
+            roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
+        }        
+      } else {
+        for(let i in roomUsers){
+          if(roomUsers[i].playerNumber == playerTurn){
+            if(roomUsers[i].diceKount = 1){
+              roomUsers[i].score -= 1;
+            } else if(roomUsers[i].diceKount > 1) {
+              roomUsers[i].diceKount -= roomUsers[i].diceKount;
+              roomUsers[i].response = 'Go Loser'
+            }
+          } else {
+            roomUsers[i].response = 'Waiting on the loser to go...';
           }
             roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
         }
-
-        io.to(room).emit('player-board', tbl)
-        io.to(room).emit('next-player', playerTurn)
-        
-      } else {
-        // user kicks a die, and new dice need to be issued
-        console.log('LOSER')
       }
+      io.to(room).emit('player-board', roomUsers)
+      io.to(room).emit('next-player', playerTurn)
     }
   });
   socket.on('send-chat-message', (room, message) => {
