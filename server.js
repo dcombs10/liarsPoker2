@@ -4,12 +4,12 @@ const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const randomWords = require('random-words')
-const path = require('path')
+// const path = require('path')
 
 app.set('views', './views')
 app.set('view engine', 'ejs')
-// app.use(express.static('public'))
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static('public'))
+// app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 
 let rooms = {}
