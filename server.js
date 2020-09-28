@@ -152,6 +152,11 @@ io.on('connection', socket => {
         // user wins, and their score needs to be increased +1
         // and then new dice need to be issued
         for(let i in roomUsers){
+          roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
+          console.log(roomUsers[i].dice)
+          // send new dice values
+          sendDiceValues(roomUsers[i].id, roomUsers[i].dice)
+          // socket.emit('dice', roomUsers[i].dice)
           if(roomUsers[i].playerNumber == playerTurn){
             roomUsers[i].score += 1;
             roomUsers[i].response = 'Winner!';
@@ -159,7 +164,6 @@ io.on('connection', socket => {
             roomUsers[i].score -= 1;
             roomUsers[i].response = 'Waiting on the winner to go...';
           }
-            roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
         }   
       } else {
         // Find the loser
@@ -168,6 +172,8 @@ io.on('connection', socket => {
         })
         let losersName = loser.playerName
         for(let i in roomUsers){
+          roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
+          socket.emit('dice', roomUsers[i].dice)
           if(roomUsers[i].playerNumber == playerTurn){
             if(roomUsers[i].diceKount == 1){
               roomUsers[i].score -= 1;
@@ -178,12 +184,12 @@ io.on('connection', socket => {
           } else {
             roomUsers[i].response = `Waiting on ${losersName} the LOSER to go...`;
           }
-            roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
         }
       }
       io.to(room).emit('player-board', roomUsers)
       io.to(room).emit('next-player', playerTurn)
       io.to(room).emit('reset-call')
+      
     }
   });
   socket.on('send-chat-message', (room, message) => {
