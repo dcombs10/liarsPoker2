@@ -151,29 +151,35 @@ io.on('connection', socket => {
       if(actualQuantity >= targetQuantity) {
         // user wins, and their score needs to be increased +1
         // and then new dice need to be issued
+
         for(let i in roomUsers){
+          // create new dice values for each player
           roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
-          console.log(roomUsers[i].dice)
+
           // send new dice values
-          sendDiceValues(roomUsers[i].id, roomUsers[i].dice)
-          // socket.emit('dice', roomUsers[i].dice)
+          sendDiceValues(io.sockets.sockets[roomUsers[i].id], roomUsers[i].dice)
+
           if(roomUsers[i].playerNumber == playerTurn){
+            // increment score & note them as the winner
             roomUsers[i].score += 1;
             roomUsers[i].response = 'Winner!';
           } else {
+            // decrement score
             roomUsers[i].score -= 1;
             roomUsers[i].response = 'Waiting on the winner to go...';
           }
         }   
       } else {
-        // Find the loser
+        // user's bet was wrong. 
+        // Loser's score needs to kick a dice, unless they only have 1 in which case they are out
+        
+        // Find the loser - IS THIS NECESSARY?
         const loser = roomUsers.find((item) => {
           return item.playerNumber === playerTurn
         })
         let losersName = loser.playerName
-        for(let i in roomUsers){
-          roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
-          socket.emit('dice', roomUsers[i].dice)
+        // IS THE ABOVE NECESSARY?
+        for(let i in roomUsers){  
           if(roomUsers[i].playerNumber == playerTurn){
             if(roomUsers[i].diceKount == 1){
               roomUsers[i].score -= 1;
@@ -184,6 +190,8 @@ io.on('connection', socket => {
           } else {
             roomUsers[i].response = `Waiting on ${losersName} the LOSER to go...`;
           }
+          roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
+          sendDiceValues(io.sockets.sockets[roomUsers[i].id], roomUsers[i].dice)
         }
       }
       io.to(room).emit('player-board', roomUsers)
@@ -202,6 +210,12 @@ io.on('connection', socket => {
     // Remove the user with that socket id from all rooms
   })
 })
+
+// YOU WERE HERE
+function sendDiceValues(socket, dice){
+  socket.emit('dice', dice)
+}
+  
 
 function setPlayerTurn(number, array) {
   if(number < array.length) {
