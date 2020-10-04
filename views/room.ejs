@@ -23,12 +23,15 @@
   </style>
 </head>
 <body>
-  <div class="ui segment" >
+  <div class="ui segment">
+    <div class="ui two column very relaxed grid">
+      <div class="column">
         <h1>Welcome to Liar's Poker</h1>
         Game Room Link:  <a href="liars-poker.net/room/<%= roomName %>">liars-poker.net/room/<%= roomName %></a>
-    <div class="ui right internal rail">
-      <div class="ui segment">
-        <div class="ui huge label" style="padding-top: 1em;">
+      </div>
+      <div class="middle aligned column">
+        <!-- <div class="ui huge label" style="padding-top: 1em;"> -->
+        <div class="ui huge label">
           Current Call:
           <div class="detail" style="font-size: 1.7rem;">
             (x<span id="currentQuantity">1</span>) 
@@ -37,7 +40,17 @@
         </div>
       </div>
     </div>
+    <div class="ui vertical divider">
+    </div>
   </div>
+
+  <!-- <div class="ui segment" >
+        
+    <div class="ui right internal rail">
+      <div class="ui segment">
+      </div>
+    </div>
+  </div> -->
   
     <div class="ui container" style="padding-top: 1em; padding-bottom: 1em;">
       <div id="players-dice" class="ui stackable twelve column grid" style="padding-top: 1em;">
@@ -76,7 +89,7 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  let devMode = true;
+  let devMode = false;
   const socketURL =
     devMode ? 'http://localhost:3000' : 'https://rocky-hollows-71917.herokuapp.com/';
   const socket = io(socketURL)

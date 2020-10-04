@@ -172,16 +172,12 @@ io.on('connection', socket => {
       } else {
         // user's bet was wrong. 
         // Loser's score needs to kick a dice, unless they only have 1 in which case they are out
-        
-        // Find the loser - IS THIS NECESSARY?
-        const loser = roomUsers.find((item) => {
-          return item.playerNumber === playerTurn
-        })
-        let losersName = loser.playerName
-        // IS THE ABOVE NECESSARY?
+        let losersName;
         for(let i in roomUsers){  
-          if(roomUsers[i].playerNumber == playerTurn){
+          if(roomUsers[i].playerNumber == playerTurn){ // This is the loser
+            losersName = roomUsers[i].playerName
             if(roomUsers[i].diceKount == 1){
+              roomUsers[i].diceKount -= 1; // will need to add logic to disable play for users with 0 dice
               roomUsers[i].score -= 1;
             } else if(roomUsers[i].diceKount > 1) {
               roomUsers[i].diceKount -= 1;
@@ -190,7 +186,12 @@ io.on('connection', socket => {
           } else {
             roomUsers[i].response = `Waiting on ${losersName} the LOSER to go...`;
           }
-          roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
+          let tempDice = [];
+		      let loopUBound = roomUsers[i].diceKount;
+          for(let i = 0; i < loopUBound; i++){
+            tempDice.push(Math.floor(Math.random() * 6) + 1);
+          }
+          roomUsers[i].dice = tempDice;
           sendDiceValues(io.sockets.sockets[roomUsers[i].id], roomUsers[i].dice)
         }
       }
