@@ -92,7 +92,7 @@ io.on('connection', socket => {
     if(raiseData.raiseQuantity > raiseData.currentQuantity){
       validRaise = !validRaise;
 
-    } else if((raiseData.raiseValue == 1 || raiseData.raiseValue >= raiseData.currentValue) && raiseData.raiseQuantity >= raiseData.currentQuantity) {
+    } else if((raiseData.raiseValue == 1 || (raiseData.raiseValue >= raiseData.currentValue && raiseData.currentValue != 1)) && raiseData.raiseQuantity >= raiseData.currentQuantity) {
       validRaise = !validRaise;
     }
     if(validRaise) {
