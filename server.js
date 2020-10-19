@@ -90,10 +90,11 @@ io.on('connection', socket => {
   socket.on('raise', ([raiseData, tbl]) => {
     let validRaise = false;
     if(raiseData.raiseQuantity > raiseData.currentQuantity){
-      validRaise = !validRaise;
-
-    } else if((raiseData.raiseValue == 1 || (raiseData.raiseValue >= raiseData.currentValue && raiseData.currentValue != 1)) && raiseData.raiseQuantity >= raiseData.currentQuantity) {
-      validRaise = !validRaise;
+      validRaise = true;
+    } else if(raiseData.raiseValue == 1){
+      if(raiseData.currentValue != 1 && raiseData.raiseQuantity >= raiseData.currentQuantity){
+        validRaise = true;
+      }      
     }
     if(validRaise) {
       let room = raiseData.room;
@@ -102,6 +103,12 @@ io.on('connection', socket => {
       })
       playerTurn = raiseData.playerTurn
       playerTurn = setPlayerTurn(playerTurn, roomUsers);
+      let currentPlayer = roomUsers.filter(function(el){
+        return el.playerNumber == playerTurn
+        })
+      if(currentPlayer[0].diceKount ==0){
+        playerTurn = setPlayerTurn(playerTurn, roomUsers);
+      }
       let raiseInfo = 
       {
         playerTurn: playerTurn,
@@ -121,6 +128,12 @@ io.on('connection', socket => {
     })
     playerTurn = callData.playerTurn;
     playerTurn = setPlayerTurn(playerTurn, roomUsers);
+    let currentPlayer = roomUsers.filter(function(el){
+      return el.playerNumber == playerTurn
+      })
+    if(currentPlayer[0].diceKount ==0){
+      playerTurn = setPlayerTurn(playerTurn, roomUsers);
+    }
     let playerCalls = 0;
     let playerCount = 0;
     for (let i in tbl) {
