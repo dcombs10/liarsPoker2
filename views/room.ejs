@@ -89,7 +89,7 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  let devMode = false;
+  let devMode = true;
   const socketURL =
     devMode ? 'http://localhost:3000' : 'https://rocky-hollows-71917.herokuapp.com/';
   const socket = io(socketURL)
@@ -144,6 +144,7 @@
         // capture current player board
         getPlayerBoardData();
         changeResponse(playerName); // updates response to "call" for a particular player in the 'tbl' variable
+        console.log(callData);
         socket.emit('call', [callData, tbl])
         break;
       default:
@@ -218,7 +219,8 @@
     playerTurn = raiseInfo.playerTurn;
     checkIfYourTurn(playerTurn, playerNumber);
   });
-  socket.on('next-player', (playerTurn) => {
+  socket.on('next-player', (serverPlayerTurn) => {
+    playerTurn = serverPlayerTurn;
     checkIfYourTurn(playerTurn, playerNumber);
   });
   socket.on('player-board', (data) => {

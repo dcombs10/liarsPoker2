@@ -83,7 +83,7 @@ io.on('connection', socket => {
     // emit dice info back to new user
     socket.emit('dice', dice)
     socket.emit('playerData', {self: self, playerTurn: playerTurn})
-    
+
     // emit all player's info back to room
     io.to(room).emit('player-board', roomUsers)
   })
