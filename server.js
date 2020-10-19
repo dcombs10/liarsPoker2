@@ -131,7 +131,7 @@ io.on('connection', socket => {
     let currentPlayer = roomUsers.filter(function(el){
       return el.playerNumber == playerTurn
       })
-    if(currentPlayer[0].diceKount ==0){
+    if(currentPlayer[0].diceKount == 0){
       playerTurn = setPlayerTurn(playerTurn, roomUsers);
     }
     let playerCalls = 0;
@@ -190,7 +190,7 @@ io.on('connection', socket => {
           if(roomUsers[i].playerNumber == playerTurn){ // This is the loser
             losersName = roomUsers[i].playerName
             if(roomUsers[i].diceKount == 1){
-              roomUsers[i].diceKount -= 1; // will need to add logic to disable play for users with 0 dice
+              roomUsers[i].diceKount -= 1; 
               roomUsers[i].score -= 1;
             } else if(roomUsers[i].diceKount > 1) {
               roomUsers[i].diceKount -= 1;
@@ -208,6 +208,15 @@ io.on('connection', socket => {
           sendDiceValues(io.sockets.sockets[roomUsers[i].id], roomUsers[i].dice)
         }
       }
+      // this skips the player's turn if they have 0 die
+      let currentPlayer = roomUsers.filter(function(el){
+        return el.playerNumber == playerTurn
+        })
+      if(currentPlayer[0].diceKount == 0){
+        playerTurn = setPlayerTurn(playerTurn, roomUsers);
+      }
+      // still need logic for game to properly treat the setPlayerTurn function based on
+      // array length after removing any players that have 0 die
       io.to(room).emit('player-board', roomUsers)
       io.to(room).emit('next-player', playerTurn)
       io.to(room).emit('reset-call')
