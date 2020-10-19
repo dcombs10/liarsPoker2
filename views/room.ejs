@@ -89,7 +89,7 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  let devMode = true;
+  let devMode = false;
   const socketURL =
     devMode ? 'http://localhost:3000' : 'https://rocky-hollows-71917.herokuapp.com/';
   const socket = io(socketURL)
