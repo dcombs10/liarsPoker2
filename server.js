@@ -95,6 +95,8 @@ io.on('connection', socket => {
       if(raiseData.currentValue != 1 && raiseData.raiseQuantity >= raiseData.currentQuantity){
         validRaise = true;
       }      
+    } else if(raiseData.raiseValue > raiseData.currentValue && raiseData.currentValue != 1 && raiseData.raiseQuantity >= raiseData.currentQuantity){
+      validRaise = true;
     }
     if(validRaise) {
       let room = raiseData.room;
@@ -126,6 +128,10 @@ io.on('connection', socket => {
     let roomUsers = users.filter(function(el){
       return el.roomName == room
     })
+    // YOU WERE HERE
+    // roomUsers = roomUsers.filter(function(el){
+    //   return el.diceKount > 0
+    // })
     playerTurn = callData.playerTurn;
     playerTurn = setPlayerTurn(playerTurn, roomUsers);
     let currentPlayer = roomUsers.filter(function(el){
@@ -217,6 +223,7 @@ io.on('connection', socket => {
       }
       // still need logic for game to properly treat the setPlayerTurn function based on
       // array length after removing any players that have 0 die
+      // YOU WERE ALSO HERE
       io.to(room).emit('player-board', roomUsers)
       io.to(room).emit('next-player', playerTurn)
       io.to(room).emit('reset-call')
