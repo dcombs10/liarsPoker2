@@ -119,10 +119,11 @@ io.on('connection', socket => {
         raiseQuantity: raiseData.raiseQuantity,
         name: playerName
       }
-
-      io.to(room).emit('player-board', tbl)
+      
       io.to(room).emit('raise', raiseInfo)
       io.to(room).emit('raise-log', raiseInfo)
+      io.to(room).emit('player-board', tbl)
+
     } else {
       socket.emit('invalidRaise')
     }
@@ -154,8 +155,9 @@ io.on('connection', socket => {
     }
     if(playerCount > playerCalls + 1){
       // if all players but one have not called (the one who made the origianl bet), then we are good to move to the next player's turn
-      io.to(room).emit('player-board', tbl)
       io.to(room).emit('next-player', playerTurn)
+      io.to(room).emit('player-board', tbl)
+      
     } else {
       // if all players have called the original player's bet, then we need to see if the original player won, or will be kicking a die
       
@@ -228,8 +230,9 @@ io.on('connection', socket => {
       // still need logic for game to properly treat the setPlayerTurn function based on
       // array length after removing any players that have 0 die
       // YOU WERE ALSO HERE
-      io.to(room).emit('player-board', roomUsers)
       io.to(room).emit('next-player', playerTurn)
+      io.to(room).emit('player-board', roomUsers)
+      
       io.to(room).emit('reset-call')
       io.to(room).emit('reset-raise-log')
       

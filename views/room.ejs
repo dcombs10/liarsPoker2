@@ -16,18 +16,18 @@
   </script>
 
   <style>
-    /* #message-container {
+    /* #raise-history-container {
       width: 80%;
       max-width: 1200px;
     } */
 
-    #message-container div {
+    #raise-history-container div {
       background-color: rgb(99, 168, 226);
       color: white;
       padding: 5px;
     }
 
-    #message-container div:nth-child(2n) {
+    #raise-history-container div:nth-child(2n) {
       background-color: white;
       color: black;
     }
@@ -96,10 +96,21 @@
     <div id="player-board" style="padding-top: 2rem;">
     </div>
   </div>
-    <div class="ui padded text container segment">
+    <div class="ui padded text container vertical segment">
       <h2 class="ui header">Raise History</h2>
+      <div id="raise-history-container"></div>
+    </div>
+    <!-- <div class="ui padded text container vertical segment">
+      <h2 class="ui header">Chat</h2>
       <div id="message-container"></div>
     </div>
+    <div class="ui container">
+      <div class="ui padded text container vertical segment"></div>
+        <input type="text">
+        <div class="ui sent label">Send</div>
+      </div>
+    </div> -->
+    
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -115,7 +126,7 @@
   const currentQuantity = document.getElementById("currentQuantity");
   const raiseValue = document.getElementById("raiseValue");
   const raiseQuantity = document.getElementById("raiseQuantity");
-  const messageContainer = document.getElementById('message-container')
+  const raiseHistoryContainer = document.getElementById('raise-history-container')
   
   let playerNumber;
   let playerTurn;
@@ -211,7 +222,7 @@
   function appendMessage(message) {
     const messageElement = document.createElement('div')
     messageElement.innerText = message
-    messageContainer.append(messageElement)
+    raiseHistoryContainer.append(messageElement)
   }
 
   if(playersDice) {
@@ -245,7 +256,7 @@
     appendMessage(`${data.name}: (x${data.raiseQuantity}) ${data.raiseValue}'s`)
   });
   socket.on('reset-raise-log', () => {
-    messageContainer.innerHTML = ''
+    raiseHistoryContainer.innerHTML = ''
   });
   socket.on('next-player', (serverPlayerTurn) => {
     playerTurn = serverPlayerTurn;
@@ -254,7 +265,12 @@
   socket.on('player-board', (data) => {
     playerTable = playerTableHeader;
     data.forEach((user) => {
-      playerTable += `<tr><td>${user.playerNumber}</td>
+      if(user.playerNumber == playerTurn){
+        playerTable += `<tr class="positive">`
+      } else {
+        playerTable += `<tr>`
+      }
+      playerTable += `<td>${user.playerNumber}</td>
                       <td>${user.playerName}</td>
                       <td>${user.diceKount}</td>
                       <td>${user.response}</td>
