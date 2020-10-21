@@ -104,6 +104,7 @@ io.on('connection', socket => {
         return el.roomName == room
       })
       playerTurn = raiseData.playerTurn
+      playerName = roomUsers[playerTurn - 1].playerName
       playerTurn = setPlayerTurn(playerTurn, roomUsers);
       let currentPlayer = roomUsers.filter(function(el){
         return el.playerNumber == playerTurn
@@ -116,9 +117,12 @@ io.on('connection', socket => {
         playerTurn: playerTurn,
         raiseValue: raiseData.raiseValue,
         raiseQuantity: raiseData.raiseQuantity,
+        name: playerName
       }
+
       io.to(room).emit('player-board', tbl)
       io.to(room).emit('raise', raiseInfo)
+      io.to(room).emit('raise-log', raiseInfo)
     } else {
       socket.emit('invalidRaise')
     }
@@ -227,6 +231,7 @@ io.on('connection', socket => {
       io.to(room).emit('player-board', roomUsers)
       io.to(room).emit('next-player', playerTurn)
       io.to(room).emit('reset-call')
+      io.to(room).emit('reset-raise-log')
       
     }
   });

@@ -16,10 +16,21 @@
   </script>
 
   <style>
-    /* body {
-      display: flex;
-      justify-content: center;
+    /* #message-container {
+      width: 80%;
+      max-width: 1200px;
     } */
+
+    #message-container div {
+      background-color: rgb(99, 168, 226);
+      color: white;
+      padding: 5px;
+    }
+
+    #message-container div:nth-child(2n) {
+      background-color: white;
+      color: black;
+    }
   </style>
 </head>
 <body>
@@ -85,7 +96,10 @@
     <div id="player-board" style="padding-top: 2rem;">
     </div>
   </div>
-  
+    <div class="ui padded text container segment">
+      <h2 class="ui header">Raise History</h2>
+      <div id="message-container"></div>
+    </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -101,6 +115,7 @@
   const currentQuantity = document.getElementById("currentQuantity");
   const raiseValue = document.getElementById("raiseValue");
   const raiseQuantity = document.getElementById("raiseQuantity");
+  const messageContainer = document.getElementById('message-container')
   
   let playerNumber;
   let playerTurn;
@@ -192,6 +207,13 @@
           }).get();
   }
 
+
+  function appendMessage(message) {
+    const messageElement = document.createElement('div')
+    messageElement.innerText = message
+    messageContainer.append(messageElement)
+  }
+
   if(playersDice) {
     const name = prompt('What is your name?')
     socket.emit('new-user', roomName, name)
@@ -218,6 +240,12 @@
     currentQuantity.innerText = raiseInfo.raiseQuantity;
     playerTurn = raiseInfo.playerTurn;
     checkIfYourTurn(playerTurn, playerNumber);
+  });
+  socket.on('raise-log', data => {
+    appendMessage(`${data.name}: (x${data.raiseQuantity}) ${data.raiseValue}'s`)
+  });
+  socket.on('reset-raise-log', () => {
+    messageContainer.innerHTML = ''
   });
   socket.on('next-player', (serverPlayerTurn) => {
     playerTurn = serverPlayerTurn;
