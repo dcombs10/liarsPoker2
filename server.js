@@ -88,6 +88,8 @@ io.on('connection', socket => {
     io.to(room).emit('player-board', roomUsers)
   })
   socket.on('raise', ([raiseData, tbl]) => {
+    console.log(raiseData.raiseQuantity);
+    console.log(raiseData.currentQuantity);
     let validRaise = false;
     if(raiseData.raiseQuantity > raiseData.currentQuantity){
       validRaise = true;
