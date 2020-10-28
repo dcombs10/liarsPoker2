@@ -70,10 +70,16 @@
     </div>
   </div> -->
 
-  <a class="ui massive label">
-    <!-- <img class="ui right spaced avatar image" src="/images/avatar/small/elliot.jpg"> -->
+  <!-- <a class="ui label">
+    <img class="ui right spaced avatar image" src="/images/scheming_beaver.jpg">
+    <img src="/images/scheming_beaver.jpg">
+    Liar's Poker
+  </a> -->
+  <div class="ui center aligned segment">
+    <img class="ui centered small image" src="/images/scheming_beaver.jpg">
     <h1>Liar's Poker</h1>
-  </a>
+  </div>
+  
 
 <div class="ui grid">
   <div class="row">
@@ -283,7 +289,7 @@
     socket.emit('new-user', roomName, name)
   }
   socket.on('dice', (dice) => {
-    window.navigator.vibrate(200);
+    // window.navigator.vibrate(200); // does not work on iOS devices
     let str = '<div class="ui tiny images">';
     dice.forEach((dice) => {
         str += '<img class="ui image" src="../images/die' + dice + '.png" alt="">';
