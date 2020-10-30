@@ -88,8 +88,8 @@ io.on('connection', socket => {
     io.to(room).emit('player-board', roomUsers)
   })
   socket.on('raise', ([raiseData, tbl]) => {
-    console.log(raiseData.raiseQuantity);
-    console.log(raiseData.currentQuantity);
+    // console.log(raiseData.raiseQuantity);
+    // console.log(raiseData.currentQuantity);
     let validRaise = false;
     if(raiseData.raiseQuantity > raiseData.currentQuantity){
       validRaise = true;
@@ -202,10 +202,10 @@ io.on('connection', socket => {
       } else {
         // user's bet was wrong. 
         // Loser's score needs to kick a dice, unless they only have 1 in which case they are out
-        let losersName;
+        // let losersName;
         for(let i in roomUsers){  
           if(roomUsers[i].playerNumber == playerTurn){ // This is the loser
-            losersName = roomUsers[i].playerName
+            // losersName = roomUsers[i].playerName
             if(roomUsers[i].diceKount == 1){
               roomUsers[i].diceKount -= 1; 
               roomUsers[i].score -= 1;
@@ -214,7 +214,7 @@ io.on('connection', socket => {
               roomUsers[i].response = 'Your turn LOSER'
             }
           } else {
-            roomUsers[i].response = `Waiting on ${losersName} the LOSER to go...`;
+            roomUsers[i].response = `Waiting on the LOSER to go...`;
           }
           let tempDice = [];
 		      let loopUBound = roomUsers[i].diceKount;
