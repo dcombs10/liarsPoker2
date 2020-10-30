@@ -135,7 +135,6 @@ io.on('connection', socket => {
     let roomUsers = users.filter(function(el){
       return el.roomName == room
     })
-    // YOU WERE HERE
     // roomUsers = roomUsers.filter(function(el){
     //   return el.diceKount > 0
     // })
@@ -156,7 +155,7 @@ io.on('connection', socket => {
       }
     }
     if(playerCount > playerCalls + 1){
-      // if all players but one have not called (the one who made the origianl bet), then we are good to move to the next player's turn
+      // if not all players have called (except the one who made the origianl bet), then we are good to move to the next player's turn
       io.to(room).emit('next-player', playerTurn)
       io.to(room).emit('player-board', tbl)
       
@@ -180,7 +179,11 @@ io.on('connection', socket => {
         // and then new dice need to be issued
 
         for(let i in roomUsers){
+          // reset dice kount to 4
+          roomUsers[i].diceKount = 4
+          
           // create new dice values for each player
+          roomUsers[i].dice = [0,0,0,0]
           roomUsers[i].dice = roomUsers[i].dice.map(n => Math.floor(Math.random() * 6) + 1)
 
           // send new dice values
