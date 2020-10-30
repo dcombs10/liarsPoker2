@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Liar's Poker</title>
+  <title>Liar's Dice</title>
   <link rel="stylesheet" href="../public/css/custom-styles.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
   <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
@@ -16,17 +16,17 @@
   </head>
   <body>
   <div class="container" style=" padding-top: 5em; padding-left: 2em;">
-    <h1 class="ui center aligned header">Welcome to Liar's Poker</h1>
+    <h1 class="ui center aligned header">Welcome to Liar's Dice</h1>
     <h5 class="ui center aligned header">
-      Play Liar's Poker online across multiple devices in a shared game room. 
+      Play Liar's Dice online across multiple devices in a shared game room. 
       Click 'Start Game' once ready to play, and then share your room's link with friends to have them join.
     </h5>
 
     <form action="/room" method="POST">
       <h3 id="new-game-link" class="ui center aligned blue header">
-        liars-poker.net/room/<%= gameRoom %>
+        <!-- liars-poker.net/room/<%= gameRoom %> -->
         <input type="text" name="room" value="<%= gameRoom %>" style="display: none;">
-        <button class="ui basic button">
+        <button class="ui basic blue button">
           <i class="play circle outline icon"></i>
           Start Game
         </button>
