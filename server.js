@@ -88,16 +88,18 @@ io.on('connection', socket => {
     io.to(room).emit('player-board', roomUsers)
   })
   socket.on('raise', ([raiseData, tbl]) => {
-    // console.log(raiseData.raiseQuantity);
-    // console.log(raiseData.currentQuantity);
+    let raiseQuantity = Number(raiseData.raiseQuantity);
+    let currentQuantity = Number(raiseData.currentQuantity);
+    let raiseValue = Number(raiseData.raiseValue);
+    let currentValue = Number(raiseData.currentValue);
     let validRaise = false;
-    if(raiseData.raiseQuantity > raiseData.currentQuantity){
+    if(raiseQuantity > currentQuantity){
       validRaise = true;
-    } else if(raiseData.raiseValue == 1){
-      if(raiseData.currentValue != 1 && raiseData.raiseQuantity >= raiseData.currentQuantity){
+    } else if(raiseValue == 1){
+      if(currentValue != 1 && raiseQuantity >= currentQuantity){
         validRaise = true;
       }      
-    } else if(raiseData.raiseValue > raiseData.currentValue && raiseData.currentValue != 1 && raiseData.raiseQuantity >= raiseData.currentQuantity){
+    } else if(raiseValue > currentValue && currentValue != 1 && raiseQuantity >= currentQuantity){
       validRaise = true;
     }
     if(validRaise) {
