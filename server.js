@@ -21,6 +21,11 @@ app.get('/', (req, res) => {
   res.render('index', {gameRoom: gameRoomString})
 })
 
+// display the rules
+app.get('/rules', (req, res) => {
+  res.render("rules")
+})
+
 // enter a specific room
 app.get('/room/:id', (req, res) => {
   if(rooms[req.params.id] == null) {

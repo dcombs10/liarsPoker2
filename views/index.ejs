@@ -15,7 +15,7 @@
   </script>
   </head>
   <body>
-  <div class="container" style=" padding-top: 5em; padding-left: 2em;">
+  <div class="ui container" style=" padding-top: 5em; padding-left: 2em;">
     <h1 class="ui center aligned header">Welcome to Liar's Dice</h1>
     <h5 class="ui center aligned header">
       Play Liar's Dice online across multiple devices in a shared game room. 
@@ -23,15 +23,21 @@
     </h5>
 
     <form action="/room" method="POST">
-      <h3 id="new-game-link" class="ui center aligned blue header">
+      <h3 id="new-game-link" class="ui center aligned header">
         <!-- liars-poker.net/room/<%= gameRoom %> -->
         <input type="text" name="room" value="<%= gameRoom %>" style="display: none;">
-        <button class="ui basic blue button">
+        <button class="ui primary button">
           <i class="play circle outline icon"></i>
           Start Game
         </button>
       </h3>
     </form>
+
+    <div class="ui center aligned container" style="padding-top: 3em;">
+      <p>New to Liar's Dice? <a href="/rules">Learn the Rules</a></p>
+    </div>
+    
+  
   </div>
 
   </body>
