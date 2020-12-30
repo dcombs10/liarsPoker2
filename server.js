@@ -181,6 +181,9 @@ io.on('connection', socket => {
             }
           })
         }
+      
+      console.log(`There were ${actualQuantity} ${targetValue}s vs the ${targetQuantity} ${targetValue}s that were called `)
+      io.to(room).emit('actual-board', {'actualQty': actualQuantity, 'targetValue': targetValue})
       if(actualQuantity >= targetQuantity) {
         // user wins, and their score needs to be increased +1
         // and then new dice need to be issued
@@ -245,11 +248,19 @@ io.on('connection', socket => {
       io.to(room).emit('next-player', playerTurn)
       io.to(room).emit('player-board', roomUsers)
       
-      io.to(room).emit('reset-call')
-      io.to(room).emit('reset-raise-log')
+      // io.to(room).emit('reset-call')
+      // io.to(room).emit('reset-raise-log')
       
     }
   });
+
+  socket.on('reset-all', (roomName) => {
+    room = roomName;
+    io.to(room).emit('reset-call')
+    io.to(room).emit('reset-raise-log')
+    io.to(room).emit('reset-actual-board')
+  })
+
   socket.on('send-chat-message', (room, message) => {
     socket.to(room).broadcast.emit('chat-message', { 
       message: message, 

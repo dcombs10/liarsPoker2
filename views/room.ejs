@@ -21,6 +21,10 @@
       max-width: 1200px;
     } */
 
+    .fixed-width-row {
+      min-width:400px;
+    }
+
     #raise-history-container div {
       background-color: rgb(99, 168, 226);
       color: white;
@@ -30,6 +34,10 @@
     #raise-history-container div:nth-child(2n) {
       background-color: white;
       color: black;
+    }
+
+    #actual-board-row {
+      display: none;
     }
   </style>
 </head>
@@ -85,21 +93,28 @@
   <div class="row">
     <div class="ui container" style="padding-top: 1em; padding-bottom: 1em;">
       <div class="ui segment">
-        <!-- <div class="ui top attached huge label"> -->
           <h2>Current Bid</h2>
           <div id="current-call" class="ui stackable twelve column grid" style="padding-top: 1em;">
           </div>
-        <!-- </div> -->
       </div>
     </div>
   </div>
 
+    <div class="row" id="actual-board-row">
+      <div class="ui container" style="padding-top: 1em; padding-bottom: 1em;">
+        <div class="ui segment">
+            <h2>Actual Board</h2>
+            <div id="actual-board" class="ui stackable twelve column grid" style="padding-top: 1em;">
+            </div>
+            <button class="ui blue button" id = "reset-button" onclick="myFunction(this)">Start Next Round</button>
+        </div>
+      </div>
+    </div>
+
   <div class="row">
     <div class="ui container" style="padding-top: 1em; padding-bottom: 1em;">
       <div class="ui segment">
-        <!-- <div class="ui top attached huge label"> -->
           <h2>Your Dice</h2>
-        <!-- </div> -->
         <div id="players-dice" class="ui stackable twelve column grid" style="padding-top: 1em;"></div>
       </div>
     </div>
@@ -134,14 +149,14 @@
 
 
   <div class="row">
-    <div class="ui container">
+    <div class="ui container fixed-width-row">
       <div id="player-board" style="padding-top: 2rem;">
       </div>
     </div>
   </div>
 
   <div class="row">
-    <div class="ui padded text container vertical segment">
+    <div class="ui text container vertical segment fixed-width-row">
       <h2 class="ui header">Raise History</h2>
       <div id="raise-history-container"></div>
     </div>
@@ -348,6 +363,25 @@
     playerTable += `</table>`
     playerBoard.innerHTML = playerTable;
   })
+  socket.on('actual-board', (boardData) => {
+    // update the currentValue and quantity to raise values:
+    document.getElementById("actual-board-row").style = "display: inline";  
+    console.log(boardData);
+    
+    let abqty = boardData.actualQty;
+    let abvalue = boardData.targetValue;
+    let abstr = '<div class="ui tiny images" style="padding-bottom: 10px;">';
+    for (let t = 0; t < abqty; t++) {
+      abstr += `<img class="ui image" src="../images/die${abvalue}.png" alt="">`;
+    }
+    abstr += '</div>';
+    document.getElementById("actual-board").innerHTML = abstr;  
+    
+  });
+  socket.on('reset-actual-board', () => {
+    document.getElementById("actual-board").innerHTML = '';
+    document.getElementById("actual-board-row").style = "display: none"; 
+  })
   socket.on('reset-call', () => {
     currentValue = 0;
     currentQuantity = 0;
@@ -360,6 +394,9 @@
   }
   document.querySelector('#raiseForm')
   .addEventListener('submit', raiseFormSubmission)
+  $('#reset-button').click(()=>{
+    socket.emit('reset-all', roomName)
+  })
 </script>
 
 </body>
